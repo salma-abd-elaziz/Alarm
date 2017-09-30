@@ -1,7 +1,9 @@
 package com.example.salma.salmaalarm;
 
 import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,9 +12,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import java.util.Calendar;
-
+// MainActivity takes to AlarmReceiver, then the AlarmReceiver will send signal to RingtoneService,
+//why the MainActivity can't talk to the RingtoneService, because if it does the song will go on
+//so the AlarmReceiver allow us to have the song playing after a certain amount of time.
 public class MainActivity extends AppCompatActivity {
-
 
     //variables.
     private final String STATUS =  "Your alarm is ";
@@ -21,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     TextView status;
     // I don't know why we need this.
     Context context;
+    PendingIntent pendingIntenet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +42,12 @@ public class MainActivity extends AppCompatActivity {
         final Calendar calendar = Calendar.getInstance();
 
         Button start = (Button) findViewById(R.id.start_alarm);
-        //Onclick listener.
+        Button end = (Button) findViewById(R.id.end_alarm);
+
+        // Create an intent for AlarmReceiver.
+        final Intent alarmReceiverIntent = new Intent(this.context, AlarmReceiver.class);
+
+       //Onclick listener.
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,17 +67,25 @@ public class MainActivity extends AppCompatActivity {
                     min = String.valueOf(alarmTime.getCurrentMinute());
                 }
 
-
                 str = Integer.parseInt(hr) > 12 ? String.valueOf(Integer.parseInt(hr) - 12) + ":" + min +"Pm" : hr + ":" + min+  " Am";
                 setAlarmText("Alarm On " + str);
+
+                //pending intent is the intent that delays the intent
+                //until the specified calender time.
+                pendingIntenet = PendingIntent.getBroadcast(MainActivity.this, 0, alarmReceiverIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                //setting the AlarmManager
+                alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntenet);
+                //after all that we need to set the manifest to allow broadcasting.  <receiver android:name=".AlarmReceiver"></receiver>
             }
         });
 
-        Button end = (Button) findViewById(R.id.end_alarm);
         end.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setAlarmText("Alarm Off!");
+                //to cancel tha alarm. we still need to stop the ringtone.
+                alarmManager.cancel(pendingIntenet);
             }
         });
     }
