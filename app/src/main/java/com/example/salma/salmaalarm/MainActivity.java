@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     TextView status;
     // I don't know why we need this.
     Context context;
-    PendingIntent pendingIntenet;
+    PendingIntent pendingIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         Button start = (Button) findViewById(R.id.start_alarm);
         Button end = (Button) findViewById(R.id.end_alarm);
 
-        // Create an intent for AlarmReceiver.
+        // Create an intent for AlarmReceiver (will go to AlarmReceiver class).
         final Intent alarmReceiverIntent = new Intent(this.context, AlarmReceiver.class);
 
        //Onclick listener.
@@ -74,10 +74,10 @@ public class MainActivity extends AppCompatActivity {
                 alarmReceiverIntent.putExtra("extra", "Alarm On");
                 //pending intent is the intent that delays the intent
                 //until the specified calender time.
-                pendingIntenet = PendingIntent.getBroadcast(MainActivity.this, 0, alarmReceiverIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, alarmReceiverIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                 //setting the AlarmManager
-                alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntenet);
+                alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
                 //after all that we need to set the manifest to allow broadcasting.  <receiver android:name=".AlarmReceiver"></receiver>
             }
         });
@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 setAlarmText("Alarm Off!");
                 //to cancel tha alarm. we still need to stop the ringtone.
-                alarmManager.cancel(pendingIntenet);
+                alarmManager.cancel(pendingIntent);
 
                 //Adding extra string in the Intent to tell the clock you pressed off.
                 alarmReceiverIntent.putExtra("extra", "Alarm Off");
