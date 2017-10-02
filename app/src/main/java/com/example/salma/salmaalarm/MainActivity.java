@@ -70,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
                 str = Integer.parseInt(hr) > 12 ? String.valueOf(Integer.parseInt(hr) - 12) + ":" + min +"Pm" : hr + ":" + min+  " Am";
                 setAlarmText("Alarm On " + str);
 
+                //Adding extra string in the Intent to tell you started the alarm.
+                alarmReceiverIntent.putExtra("extra", "Alarm On");
                 //pending intent is the intent that delays the intent
                 //until the specified calender time.
                 pendingIntenet = PendingIntent.getBroadcast(MainActivity.this, 0, alarmReceiverIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -86,6 +88,14 @@ public class MainActivity extends AppCompatActivity {
                 setAlarmText("Alarm Off!");
                 //to cancel tha alarm. we still need to stop the ringtone.
                 alarmManager.cancel(pendingIntenet);
+
+                //Adding extra string in the Intent to tell the clock you pressed off.
+                alarmReceiverIntent.putExtra("extra", "Alarm Off");
+
+                //Stop the ringTone.
+                //This sends a signal to AlarmReceiver which will sends a signal to the RingTonePlayingService immediately.
+                sendBroadcast(alarmReceiverIntent);
+
             }
         });
     }
