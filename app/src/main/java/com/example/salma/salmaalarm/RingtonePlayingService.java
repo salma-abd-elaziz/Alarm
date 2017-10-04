@@ -71,7 +71,7 @@ public class RingtonePlayingService extends Service {
             if (Build.VERSION.SDK_INT >= 16) {
                 Log.e("in >= 16 ", "notification");
                 notification = new Notification.Builder(this)
-                        .setContentTitle("Alarm Goes Off!")
+                        .setContentTitle("Want Alarm to Go Off!")
                         .setContentText("Click Me")
                         .setContentIntent(pendingIntent)    //takes the pending intent.
                         .setAutoCancel(true) //when we click on it , this make it disappear so we don't have to manually do it.
@@ -80,7 +80,7 @@ public class RingtonePlayingService extends Service {
             } else {
                 Log.e("in < 16 ", "notification");
                 notification = new Notification.Builder(this)
-                        .setContentTitle("Alarm Goes Off!")
+                        .setContentTitle("Want Alarm to Go Off!")
                         .setContentText("Click Me")
                         .setContentIntent(pendingIntent)    //takes the pending intent.
                         .setAutoCancel(true) //when we click on it , this make it disappear so we don't have to manually do it.
@@ -115,7 +115,7 @@ public class RingtonePlayingService extends Service {
         else if (this.isRunning && startId == 1) {
             Log.e("play", "case 4");
             this.startId = 0;
-            this.isRunning = false;
+//            this.isRunning = false;
         }
         //Any other stupid state.
         else {
