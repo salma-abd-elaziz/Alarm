@@ -53,28 +53,27 @@ public class RingtonePlayingService extends Service {
                 break;
         }
 
-        //No music playing and user pressed Alarm On the music should start.
-
+        // No music playing and user pressed Alarm On the music should start.
         if (!this.isRunning && startId == 1) {
 
-            //Setting the notification using the notification manager.
+            // Setting the notification using the notification manager.
             NotificationManager notificationManager =  (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-            //When the notification pops up we need the main activity to pop up using an intent
+            // When the notification pops up we need the main activity to pop up using an intent
             // that goes to mainActivity.
-            //But I want that to happen when the alarm goes off so we need pending intent.
+            // But I want that to happen when the alarm goes off so we need pending intent.
             Intent intentMainActivity = new Intent(this.getApplicationContext(), MainActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intentMainActivity, 0);
 
-            //Make the Notification parameters.
+            // Make the Notification parameters.
             Notification notification;
             if (Build.VERSION.SDK_INT >= 16) {
                 Log.e("in >= 16 ", "notification");
                 notification = new Notification.Builder(this)
                         .setContentTitle("Want Alarm to Go Off!")
                         .setContentText("Click Me")
-                        .setContentIntent(pendingIntent)    //takes the pending intent.
-                        .setAutoCancel(true) //when we click on it , this make it disappear so we don't have to manually do it.
+                        .setContentIntent(pendingIntent)    // takes the pending intent.
+                        .setAutoCancel(true) // when we click on it , this make it disappear so we don't have to manually do it.
                         .build();
 
             } else {
@@ -82,11 +81,11 @@ public class RingtonePlayingService extends Service {
                 notification = new Notification.Builder(this)
                         .setContentTitle("Want Alarm to Go Off!")
                         .setContentText("Click Me")
-                        .setContentIntent(pendingIntent)    //takes the pending intent.
-                        .setAutoCancel(true) //when we click on it , this make it disappear so we don't have to manually do it.
+                        .setContentIntent(pendingIntent)    // takes the pending intent.
+                        .setAutoCancel(true) // when we click on it , this make it disappear so we don't have to manually do it.
                         .getNotification();
             }
-            //I don't know what the value 0 means.
+            // I don't know what the value 0 means.
             notificationManager.notify(0, notification);
 
             Log.e("play", "case 1");
@@ -95,7 +94,7 @@ public class RingtonePlayingService extends Service {
             this.isRunning = true;
             this.startId = 0;
         }
-        //Music playing and user pressed Alarm Off the music should stop.
+        // Music playing and user pressed Alarm Off the music should stop.
         else if (this.isRunning && startId == 0){
             Log.e("play", "case 2");
             mediaPlayer.stop();
@@ -104,20 +103,19 @@ public class RingtonePlayingService extends Service {
             this.isRunning = false;
             this.startId = 0; //ملهاش لازمة
         }
-        //No music playing and user pressed Alarm Off do nothing.
+        // No music playing and user pressed Alarm Off do nothing.
         else if (!this.isRunning && startId == 0) {
             Log.e("play", "case 3");
             this.startId = 0;
             this.isRunning = false;
         }
-        //Music playing and user pressed Alarm On do nothing.
-
+        // Music playing and user pressed Alarm On do nothing.
         else if (this.isRunning && startId == 1) {
             Log.e("play", "case 4");
             this.startId = 0;
 //            this.isRunning = false;
         }
-        //Any other stupid state.
+        // Any other stupid state.
         else {
             Log.e("play", "case 5");
             this.startId = 0;
