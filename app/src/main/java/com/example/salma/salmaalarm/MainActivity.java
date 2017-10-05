@@ -18,8 +18,8 @@ import android.widget.Toast;
 
 import java.util.Calendar;
 // MainActivity takes to AlarmReceiver, then the AlarmReceiver will send signal to RingtoneService,
-//why the MainActivity can't talk to the RingtoneService, because if it does the song will go on
-//so the AlarmReceiver allow us to have the song playing after a certain amount of time.
+// why the MainActivity can't talk to the RingtoneService, because if it does the song will go on
+// so the AlarmReceiver allow us to have the song playing after a certain amount of time.
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     // variables.
@@ -143,6 +143,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-        // parent.getItemAtPosition(pos)// Another interface callback
+        // Another interface callback
     }
 }

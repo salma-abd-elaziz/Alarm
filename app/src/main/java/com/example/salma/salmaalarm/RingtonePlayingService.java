@@ -1,6 +1,5 @@
 package com.example.salma.salmaalarm;
 
-import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -26,8 +25,6 @@ public class RingtonePlayingService extends Service {
         return null;
     }
 
-
-//    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
@@ -39,7 +36,7 @@ public class RingtonePlayingService extends Service {
 
 
 
-        //Will know from boolean music_is_playing and id of the signal id = 0 (broadcast) id = 1 ()
+        // Will know from boolean music_is_playing and id of the signal id = 0 (broadcast) id = 1 ()
         assert getExtra != null;
         switch (getExtra){
             case "Alarm On":
