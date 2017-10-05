@@ -18,6 +18,9 @@ public class RingtonePlayingService extends Service {
     private MediaPlayer mediaPlayer;
     private int startId;
     private boolean isRunning;
+    private final int RANDOM = 0, MUSICAL = 1, COOL = 2, MORNING = 3, NICE = 4;
+
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -27,18 +30,19 @@ public class RingtonePlayingService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
         Log.e("in the service", "ssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
 
+        // Get extras From the Alarm receiver.
+        String UserPressed = intent.getExtras().getString("extra");
+        int chosenRingtone = intent.getExtras().getInt("ringtone");
 
-        String getExtra = intent.getExtras().getString("extra");
-        Log.e("in the service", getExtra);
-
+        Log.e("in the service", UserPressed);
+        Log.e("in the service", String.valueOf(chosenRingtone));
 
 
         // Will know from boolean music_is_playing and id of the signal id = 0 (broadcast) id = 1 ()
-        assert getExtra != null;
-        switch (getExtra){
+        assert UserPressed != null;
+        switch (UserPressed){
             case "Alarm On":
                 startId = 1;
                 break;
@@ -85,9 +89,26 @@ public class RingtonePlayingService extends Service {
             // I don't know what the value 0 means.
             notificationManager.notify(0, notification);
 
+            // specify the ringtone.
+            if (chosenRingtone == RANDOM){
+                chosenRingtone = getRandomNumber();
+            }
+
+            if (chosenRingtone == MUSICAL) {
+                mediaPlayer = MediaPlayer.create(this, R.raw.alarma_musical);
+                mediaPlayer.start();
+            } else if (chosenRingtone == COOL) {
+                mediaPlayer = MediaPlayer.create(this, R.raw.best_wake_up);
+                mediaPlayer.start();
+            } else if (chosenRingtone == MORNING) {
+                mediaPlayer = MediaPlayer.create(this, R.raw.morning_alarm);
+                mediaPlayer.start();
+            } else if (chosenRingtone == NICE) {
+                mediaPlayer = MediaPlayer.create(this, R.raw.nice_wake_up_alarm);
+                mediaPlayer.start();
+            }
+
             Log.e("play", "case 1");
-            mediaPlayer = MediaPlayer.create(this, R.raw.alarma_musical);
-            mediaPlayer.start();
             this.isRunning = true;
             this.startId = 0;
         }
@@ -98,7 +119,7 @@ public class RingtonePlayingService extends Service {
             mediaPlayer.reset();
 
             this.isRunning = false;
-            this.startId = 0; //ملهاش لازمة
+            this.startId = 0;
         }
         // No music playing and user pressed Alarm Off do nothing.
         else if (!this.isRunning && startId == 0) {
@@ -110,7 +131,7 @@ public class RingtonePlayingService extends Service {
         else if (this.isRunning && startId == 1) {
             Log.e("play", "case 4");
             this.startId = 0;
-//            this.isRunning = false;
+            //this.isRunning = false;
         }
         // Any other stupid state.
         else {
@@ -118,9 +139,6 @@ public class RingtonePlayingService extends Service {
             this.startId = 0;
             this.isRunning = false;
         }
-
-
-
 
         // If the service stopped it will not automatically restart.
         return START_NOT_STICKY;
@@ -133,5 +151,11 @@ public class RingtonePlayingService extends Service {
         Log.e("on Destroy", "destroyed");
         super.onDestroy();
 
+    }
+
+    private int getRandomNumber() {
+        int n =  (int)(Math.random() * 4) + 1;
+        Log.e("in service " , String.valueOf(n));
+        return n;
     }
 }

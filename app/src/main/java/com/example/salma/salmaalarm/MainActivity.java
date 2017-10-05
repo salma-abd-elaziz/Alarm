@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -20,6 +21,9 @@ import java.util.Calendar;
 // MainActivity takes to AlarmReceiver, then the AlarmReceiver will send signal to RingtoneService,
 // why the MainActivity can't talk to the RingtoneService, because if it does the song will go on
 // so the AlarmReceiver allow us to have the song playing after a certain amount of time.
+
+// TODO when you set the alarm more than once and the time is not near it gose on thought.
+// TODO make the receiver with a view and make the vibration and volume level options.
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     // variables.
@@ -28,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private TimePicker alarmTime;
     private TextView status;
     private boolean alarmIsOn;
+    private int chosenRingTone;
     // I don't know why we need this.
     private Context context;
     private PendingIntent pendingIntent;
@@ -58,6 +63,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // Specify the layout to use when the list of choices appears.
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
+        // OnItemSelectedListener of the spinner.
+        spinner.setOnItemSelectedListener(this);
 
         // Create an intent for AlarmReceiver (will go to AlarmReceiver class).
         final Intent alarmReceiverIntent = new Intent(this.context, AlarmReceiver.class);
@@ -69,16 +76,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 if (!alarmIsOn){ // Alarm is off.
                     alarmIsOn = true;
                     String hr = "", min = "", str = "";
-                    if (Build.VERSION.SDK_INT >= 23 ) {
+                    if (Build.VERSION.SDK_INT >= 23) {
                         // set the calender.
                         calendar.set(Calendar.HOUR_OF_DAY, alarmTime.getHour());
                         hr = String.valueOf(alarmTime.getHour());
-                        calendar.set(Calendar.MINUTE, alarmTime.getMinute());
-                        min = String.valueOf(alarmTime.getMinute());
                     } else {
                         // set the calender.
                         calendar.set(Calendar.HOUR_OF_DAY, alarmTime.getCurrentHour());
                         hr = String.valueOf(alarmTime.getCurrentHour());
+                    }
+                    if (Build.VERSION.SDK_INT >= 23) {
+                        calendar.set(Calendar.MINUTE, alarmTime.getMinute());
+                        min = String.valueOf(alarmTime.getMinute());
+                    } else {
                         calendar.set(Calendar.MINUTE, alarmTime.getCurrentMinute());
                         min = String.valueOf(alarmTime.getCurrentMinute());
                     }
@@ -87,6 +97,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                     // Adding extra string in the Intent to tell you started the alarm.
                     alarmReceiverIntent.putExtra("extra", "Alarm On");
+                    alarmReceiverIntent.putExtra("ringtone", chosenRingTone);
+
                     // pending intent is the intent that delays the intent
                     // until the specified calender time.
                     pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, alarmReceiverIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -94,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     // setting the AlarmManager
                     alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
                     // after all that we need to set the manifest to allow broadcasting.  <receiver android:name=".AlarmReceiver"></receiver>
+
                 } else {  // Alarm is on.
                     CharSequence text = "Alarm already set!";
                     int duration = Toast.LENGTH_SHORT;
@@ -117,6 +130,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     // Adding extra string in the Intent to tell the clock you pressed off.
                     alarmReceiverIntent.putExtra("extra", "Alarm Off");
 
+                    // Adding the chosenRingtone to the intent because we access it in the receiver
+                    // TODO maybe you can check in the receiver if ! null.
+                    alarmReceiverIntent.putExtra("ringtone", chosenRingTone);
+
                     // Stop the ringTone.
                     // This sends a signal to AlarmReceiver which will sends a signal to the RingTonePlayingService immediately.
                     sendBroadcast(alarmReceiverIntent);
@@ -138,7 +155,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         // An item was selected. You can retrieve the selected item using
-        // parent.getItemAtPosition(pos)
+        // This will be called when the selected item change.
+        chosenRingTone = (int)id; // This will be sent as extra to the Service.
+       // chosenRingTone = parent.getItemIdAtPosition(position);
+        Log.e("Ringtone mainActivity", String.valueOf(chosenRingTone));
+        int duration = Toast.LENGTH_SHORT;
+
+        Toast toast = Toast.makeText(context, "Ringtone mainActivity", duration);
+        toast.show();
+
     }
 
     @Override

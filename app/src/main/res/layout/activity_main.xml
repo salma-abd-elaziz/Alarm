@@ -10,25 +10,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.salma.salmaalarm.MainActivity">
 
-    <TimePicker
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/timePicker"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="28dp" />
-
-    <Spinner
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:id="@+id/spinner"
-        android:layout_alignRight="@+id/end_alarm"
-        android:layout_alignEnd="@+id/end_alarm"
-        android:layout_alignLeft="@+id/start_alarm"
-        android:layout_alignStart="@+id/start_alarm" />
-
     <TextView
         android:text="Did you set the alarm?"
         android:layout_width="wrap_content"
@@ -36,16 +17,6 @@
         android:id="@+id/status"
         android:layout_below="@+id/timePicker"
         android:layout_centerHorizontal="true" />
-
-    <Button
-        android:text="Trun On"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/start_alarm"
-        android:layout_above="@+id/spinner"
-        android:layout_toLeftOf="@+id/status"
-        android:layout_toStartOf="@+id/status"
-        android:layout_marginBottom="11dp" />
 
     <Button
         android:text="Turn off"
@@ -56,4 +27,39 @@
         android:layout_alignBottom="@+id/start_alarm"
         android:layout_toRightOf="@+id/status"
         android:layout_toEndOf="@+id/status" />
+
+    <TimePicker
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/timePicker"
+        android:layout_alignParentTop="true"
+        android:layout_alignLeft="@+id/start_alarm"
+        android:layout_alignStart="@+id/start_alarm" />
+
+    <Button
+        android:text="Trun On"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/start_alarm"
+        android:layout_below="@+id/status"
+        android:layout_toLeftOf="@+id/status"
+        android:layout_toStartOf="@+id/status"
+        android:layout_marginTop="12dp" />
+
+    <TextView
+        android:text="Choose a Ringtone :"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView"
+        android:layout_below="@+id/start_alarm"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinner"
+        android:layout_below="@+id/textView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 </RelativeLayout>

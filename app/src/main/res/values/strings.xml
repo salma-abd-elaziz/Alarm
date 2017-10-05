@@ -2,6 +2,7 @@
     <string name="app_name">SalmaAlarm</string>
 
     <string-array name="ringtones">
+        <item>Surprise me!</item>
         <item>music</item>
         <item>Cool</item>
         <item>morning</item>
