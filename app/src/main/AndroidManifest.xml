@@ -16,9 +16,11 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name="AlarmReceiver"></receiver>
+        <receiver android:name=".AlarmReceiver" />
 
-        <service android:name=".RingtonePlayingService"></service>
+        <service android:name=".RingtonePlayingService" />
+
+        <activity android:name=".PopActivity" android:noHistory="false" >  </activity>
     </application>
 
 </manifest>

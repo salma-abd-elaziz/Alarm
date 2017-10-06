@@ -33,7 +33,7 @@ public class RingtonePlayingService extends Service {
         Log.e("in the service", "ssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
 
         // Get extras From the Alarm receiver.
-        String UserPressed = intent.getExtras().getString("extra");
+        String UserPressed = intent.getExtras().getString("buttonPressed");
         int chosenRingtone = intent.getExtras().getInt("ringtone");
 
         Log.e("in the service", UserPressed);
@@ -88,6 +88,8 @@ public class RingtonePlayingService extends Service {
             }
             // I don't know what the value 0 means.
             notificationManager.notify(0, notification);
+
+
 
             // specify the ringtone.
             if (chosenRingtone == RANDOM){

@@ -12,10 +12,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import java.util.Calendar;
 // MainActivity takes to AlarmReceiver, then the AlarmReceiver will send signal to RingtoneService,
@@ -43,6 +45,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Log.e("the booooooooolean ", String.valueOf(alarmIsOn));
+
         this.context = this;
         // Initializing alarm manager.
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
@@ -53,8 +57,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // Initializing calender object.
         final Calendar calendar = Calendar.getInstance();
 
+        ToggleButton toggle = (ToggleButton) findViewById(R.id.toggleButton);
         Button start = (Button) findViewById(R.id.start_alarm);
-        Button end = (Button) findViewById(R.id.end_alarm);
 
         // Creating the spinner.
         Spinner spinner = (Spinner) findViewById(R.id.spinner);
@@ -69,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // Create an intent for AlarmReceiver (will go to AlarmReceiver class).
         final Intent alarmReceiverIntent = new Intent(this.context, AlarmReceiver.class);
 
-       // Onclick listener.
+        // Onclick listener.
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -80,23 +84,23 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         // set the calender.
                         calendar.set(Calendar.HOUR_OF_DAY, alarmTime.getHour());
                         hr = String.valueOf(alarmTime.getHour());
+                        calendar.set(Calendar.MINUTE, alarmTime.getMinute());
+                        min = String.valueOf(alarmTime.getMinute());
                     } else {
                         // set the calender.
                         calendar.set(Calendar.HOUR_OF_DAY, alarmTime.getCurrentHour());
                         hr = String.valueOf(alarmTime.getCurrentHour());
-                    }
-                    if (Build.VERSION.SDK_INT >= 23) {
-                        calendar.set(Calendar.MINUTE, alarmTime.getMinute());
-                        min = String.valueOf(alarmTime.getMinute());
-                    } else {
                         calendar.set(Calendar.MINUTE, alarmTime.getCurrentMinute());
                         min = String.valueOf(alarmTime.getCurrentMinute());
                     }
                     str = Integer.parseInt(hr) > 12 ? String.valueOf(Integer.parseInt(hr) - 12) + ":" + min +"Pm" : hr + ":" + min+  " Am";
                     setAlarmText("Alarm On " + str);
 
+
+                    Log.e("hours ", hr);
+                    Log.e("Min", min);
+
                     // Adding extra string in the Intent to tell you started the alarm.
-                    alarmReceiverIntent.putExtra("extra", "Alarm On");
                     alarmReceiverIntent.putExtra("ringtone", chosenRingTone);
 
                     // pending intent is the intent that delays the intent
@@ -106,7 +110,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     // setting the AlarmManager
                     alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
                     // after all that we need to set the manifest to allow broadcasting.  <receiver android:name=".AlarmReceiver"></receiver>
-
                 } else {  // Alarm is on.
                     CharSequence text = "Alarm already set!";
                     int duration = Toast.LENGTH_SHORT;
@@ -118,34 +121,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         });
 
-        end.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (alarmIsOn) { // Alarm is on.
-                    alarmIsOn = false;
-                    setAlarmText("Alarm Off!");
-                    // to cancel tha alarm. we still need to stop the ringtone.
-                    alarmManager.cancel(pendingIntent);
-
-                    // Adding extra string in the Intent to tell the clock you pressed off.
-                    alarmReceiverIntent.putExtra("extra", "Alarm Off");
-
-                    // Adding the chosenRingtone to the intent because we access it in the receiver
-                    // TODO maybe you can check in the receiver if ! null.
-                    alarmReceiverIntent.putExtra("ringtone", chosenRingTone);
-
-                    // Stop the ringTone.
-                    // This sends a signal to AlarmReceiver which will sends a signal to the RingTonePlayingService immediately.
-                    sendBroadcast(alarmReceiverIntent);
-                } else {  // Alarm is off.
-                    CharSequence text = "Alarm already off!";
-                    int duration = Toast.LENGTH_SHORT;
-
-                    Toast toast = Toast.makeText(context, text, duration);
-                    toast.show();
+        toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    // The toggle is enabled, enable vibration.
+                } else {
+                    // The toggle is disabled, disable vibration.
                 }
             }
         });
+
     }
 
     private void setAlarmText(String s) {
