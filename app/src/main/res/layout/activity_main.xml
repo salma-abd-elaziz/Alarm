@@ -35,16 +35,6 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
-    <Button
-        android:text="Trun On"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/start_alarm"
-        android:layout_marginTop="12dp"
-        android:layout_below="@+id/status"
-        android:layout_alignLeft="@+id/status"
-        android:layout_alignStart="@+id/status" />
-
     <ToggleButton
         android:text="ToggleButton"
         android:layout_width="wrap_content"
@@ -72,4 +62,31 @@
         android:id="@+id/timePicker"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
+
+    <Button
+        android:text="Trun On"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/start_alarm"
+        android:layout_below="@+id/status"
+        android:layout_centerHorizontal="true" />
+
+    <SeekBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/VoluneSeekBar"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_toRightOf="@+id/Vibration"
+        android:layout_toEndOf="@+id/Vibration" />
+
+    <TextView
+        android:text="Volume Level:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/VoluneSeekBar"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/textView2" />
 </RelativeLayout>

@@ -13,19 +13,19 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-
 import java.util.Calendar;
+
 // MainActivity takes to AlarmReceiver, then the AlarmReceiver will send signal to RingtoneService,
 // why the MainActivity can't talk to the RingtoneService, because if it does the song will go on
 // so the AlarmReceiver allow us to have the song playing after a certain amount of time.
 
 // TODO when you set the alarm more than once and the time is not near it gose on thought.
-// TODO make the receiver with a view and make the vibration and volume level options.
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     // variables.
@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private TimePicker alarmTime;
     private TextView status;
     private boolean alarmIsOn;
-    private int chosenRingTone;
+    private int chosenRingTone, volumeLevel, MAXVOLUME = 10;
     // I don't know why we need this.
     private Context context;
     private PendingIntent pendingIntent;
@@ -44,6 +44,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Initializing volume level.
+        volumeLevel = MAXVOLUME;
 
         Log.e("the booooooooolean ", String.valueOf(alarmIsOn));
 
@@ -57,7 +60,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // Initializing calender object.
         final Calendar calendar = Calendar.getInstance();
 
+        // Vibration toggle button initialization.
         ToggleButton toggle = (ToggleButton) findViewById(R.id.toggleButton);
+
+        // Volume bar settings;
+        SeekBar volumeSeekBar = (SeekBar) findViewById(R.id.VoluneSeekBar);
+        volumeSeekBar.setMax(MAXVOLUME);
+        volumeSeekBar.setProgress(MAXVOLUME);
+
         Button start = (Button) findViewById(R.id.start_alarm);
 
         // Creating the spinner.
@@ -72,6 +82,32 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         // Create an intent for AlarmReceiver (will go to AlarmReceiver class).
         final Intent alarmReceiverIntent = new Intent(this.context, AlarmReceiver.class);
+
+        toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    // The toggle is enabled, enable vibration.
+                    alarmReceiverIntent.putExtra("enableVibration", true);
+                    Log.e("toggle", "on");
+                } else {
+                    // The toggle is disabled, disable vibration.
+                    alarmReceiverIntent.putExtra("enableVibration", false);
+                    Log.e("toggle", "off");
+                }
+            }
+        });
+
+        volumeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                Log.e("volume", String.valueOf(progress));
+                volumeLevel = progress;
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
 
         // Onclick listener.
         start.setOnClickListener(new View.OnClickListener() {
@@ -102,6 +138,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                     // Adding extra string in the Intent to tell you started the alarm.
                     alarmReceiverIntent.putExtra("ringtone", chosenRingTone);
+                    alarmReceiverIntent.putExtra("volume", volumeLevel);
 
                     // pending intent is the intent that delays the intent
                     // until the specified calender time.
@@ -113,7 +150,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 } else {  // Alarm is on.
                     CharSequence text = "Alarm already set!";
                     int duration = Toast.LENGTH_SHORT;
-
                     Toast toast = Toast.makeText(context, text, duration);
                     toast.show();
                 }
@@ -121,15 +157,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         });
 
-        toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    // The toggle is enabled, enable vibration.
-                } else {
-                    // The toggle is disabled, disable vibration.
-                }
-            }
-        });
 
     }
 
@@ -142,6 +169,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // An item was selected. You can retrieve the selected item using
         // This will be called when the selected item change.
         chosenRingTone = (int)id; // This will be sent as extra to the Service.
+
        // chosenRingTone = parent.getItemIdAtPosition(position);
         Log.e("Ringtone mainActivity", String.valueOf(chosenRingTone));
         int duration = Toast.LENGTH_SHORT;
